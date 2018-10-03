@@ -6,6 +6,10 @@ const passport = require("passport");
 // Load Validation
 const validateProfileInput = require("../../validation/profile");
 
+const validateExperienceInput = require("../../validation/experience");
+
+const validateEducationInput = require("../../validation/education");
+
 // Load Profile Model
 const Profile = require("../../models/Profile");
 // Load User Profile
@@ -18,7 +22,7 @@ const User = require("../../models/User");
 router.get("/test", (req, res) => res.json({ msg: "Profile works" }));
 
 // @route  GET api/profile
-// Get current users profile
+// @desc   Get current users profile
 // @access Private
 router.get(
   "/",
@@ -42,7 +46,7 @@ router.get(
 );
 
 // @route  GET api/profile/all
-// Get all profiles
+// @desc   Get all profiles
 // @access Public
 router.get("/all", (req, res) => {
   const errors = {};
@@ -61,7 +65,7 @@ router.get("/all", (req, res) => {
 });
 
 // @route  GET api/profile/handle/:handle  // back-end api route
-// Get profile by handle
+// @desc   Get profile by handle
 // @access Public (anyone can view other's profiles)
 
 router.get("/handle/:handle", (req, res) => {
@@ -83,7 +87,7 @@ router.get("/handle/:handle", (req, res) => {
 });
 
 // @route  GET api/profile/user/:user_id
-// Get profile by user_id
+// @desc   Get profile by user_id
 // @access Public
 
 router.get("/user/:user_id", (req, res) => {
@@ -105,7 +109,7 @@ router.get("/user/:user_id", (req, res) => {
 });
 
 // @route  POST api/profile
-// Get Create or update user profile
+// @desc   Create or update user profile
 // @access Private
 router.post(
   "/",
@@ -167,6 +171,74 @@ router.post(
           new Profile(profileFields).save().then(profile => res.json(profile));
         });
       }
+    });
+  }
+);
+
+// @route  POST api/profile/experience
+// @desc   Add experience to profile
+// @access Private
+router.post(
+  "/experience",
+  passport.authenticate("jwt", { session: false }),
+  (req, res) => {
+    const { errors, isValid } = validateExperienceInput(req.body);
+
+    // Check Validation
+    if (!isValid) {
+      // Return any errors with 400 status
+      return res.status(400).json(errors);
+    }
+
+    Profile.findOne({ user: req.user.id }).then(profile => {
+      const newExp = {
+        title: req.body.title,
+        company: req.body.company,
+        location: req.body.location,
+        from: req.body.from,
+        to: req.body.to,
+        current: req.body.current,
+        description: req.body.description
+      };
+
+      // Add to exp array
+      profile.experience.unshift(newExp);
+
+      profile.save().then(profile => res.json(profile));
+    });
+  }
+);
+
+// @route  POST api/profile/education
+// @desc   Add education to profile
+// @access Private
+router.post(
+  "/education",
+  passport.authenticate("jwt", { session: false }),
+  (req, res) => {
+    const { errors, isValid } = validateEducationInput(req.body);
+
+    // Check Validation
+    if (!isValid) {
+      // Return any errors with 400 status
+      return res.status(400).json(errors);
+    }
+
+    Profile.findOne({ user: req.user.id }).then(profile => {
+      const newEdu = {
+        school: req.body.school,
+        degree: req.body.degree,
+        fieldOfStudy: req.body.fieldOfStudy,
+        from: req.body.from,
+        to: req.body.to,
+        current: req.body.current,
+        description: req.body.description
+      };
+
+      // Add to exp array
+      profile.education.unshift(newEdu);
+
+      profile.save().then(profile => res.json(profile));
     });
   }
 );
