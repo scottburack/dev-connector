@@ -61,6 +61,4 @@ class App extends Component {
   }
 }
 
-//testing
-
 export default App;
