@@ -1,10 +1,12 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
+import { withRouter } from "react-router-dom";
 import PropTypes from "prop-types";
 import TextFieldGroup from "../common/TextFieldGroup";
 import TextareaFieldGroup from "../common/TextareaFieldGroup";
 import InputGroup from "../common/InputGroup";
 import SelectListGroup from "../common/SelectListGroup";
+import { createProfile } from "../../actions/profileActions";
 
 class CreateProfile extends Component {
   constructor(props) {
@@ -28,10 +30,34 @@ class CreateProfile extends Component {
     };
   }
 
+  componentWillReceiveProps = nextProps => {
+    if (nextProps.errors) {
+      this.setState({
+        errors: nextProps.errors
+      });
+    }
+  };
+
   onSubmit = e => {
     e.preventDefault();
 
-    console.log("submit");
+    const profileData = {
+      handle: this.state.handle,
+      company: this.state.company,
+      website: this.state.website,
+      location: this.state.location,
+      status: this.state.status,
+      skills: this.state.skills,
+      githubusername: this.state.githubusername,
+      bio: this.state.bio,
+      twitter: this.state.twitter,
+      facebook: this.state.facebook,
+      linkedin: this.state.linkedin,
+      youtube: this.state.youtube,
+      instagram: this.state.instagram
+    };
+
+    this.props.createProfile(profileData, this.props.history);
   };
 
   onChange = e => {
@@ -50,7 +76,7 @@ class CreateProfile extends Component {
         <div>
           <InputGroup
             placeHolder="Twitter Profile URL"
-            name="Twitter"
+            name="twitter"
             icon="fab fa-twitter"
             value={this.state.twitter}
             onChange={this.onChange}
@@ -59,7 +85,7 @@ class CreateProfile extends Component {
 
           <InputGroup
             placeHolder="Facebook Profile URL"
-            name="Facebook"
+            name="facebook"
             icon="fab fa-facebook"
             value={this.state.facebook}
             onChange={this.onChange}
@@ -68,7 +94,7 @@ class CreateProfile extends Component {
 
           <InputGroup
             placeHolder="LinkedIn Profile URL"
-            name="LinkedIn"
+            name="linkedin"
             icon="fab fa-linkedin"
             value={this.state.linkedin}
             onChange={this.onChange}
@@ -77,7 +103,7 @@ class CreateProfile extends Component {
 
           <InputGroup
             placeHolder="Youtube Channel URL"
-            name="Youtube"
+            name="youtube"
             icon="fab fa-youtube"
             value={this.state.youtube}
             onChange={this.onChange}
@@ -86,7 +112,7 @@ class CreateProfile extends Component {
 
           <InputGroup
             placeHolder="Instagram Profile URL"
-            name="Instagram"
+            name="instagram"
             icon="fab fa-instagram"
             value={this.state.instagram}
             onChange={this.onChange}
@@ -119,20 +145,20 @@ class CreateProfile extends Component {
                 Let's get some information to make your profile standout
               </p>
               <small className="d-block pb-3">* = required fields</small>
-              <form onSubmit={() => this.onSubmit}>
+              <form onSubmit={this.onSubmit}>
                 <TextFieldGroup
                   placeholder="* Profile Handle"
                   name="handle"
                   value={this.state.handle}
-                  onChange={() => this.onChange}
+                  onChange={this.onChange}
                   error={errors.handle}
                   info="A unique handle for you profile URL. Your full name, company name, nickname"
                 />
                 <SelectListGroup
                   placeholder="Status"
-                  name="Status"
+                  name="status"
                   value={this.state.status}
-                  onChange={() => this.onChange}
+                  onChange={this.onChange}
                   options={options}
                   error={errors.status}
                   info="Give us an idea of where you are at in your career"
@@ -141,7 +167,7 @@ class CreateProfile extends Component {
                   placeholder="Company"
                   name="company"
                   value={this.state.company}
-                  onChange={() => this.onChange}
+                  onChange={this.onChange}
                   error={errors.company}
                   info="Could be your own company or one you work for"
                 />
@@ -149,7 +175,7 @@ class CreateProfile extends Component {
                   placeholder="Website"
                   name="website"
                   value={this.state.website}
-                  onChange={() => this.onChange}
+                  onChange={this.onChange}
                   error={errors.website}
                   info="Could be your own website or company one"
                 />
@@ -157,7 +183,7 @@ class CreateProfile extends Component {
                   placeholder="Location"
                   name="location"
                   value={this.state.location}
-                  onChange={() => this.onChange}
+                  onChange={this.onChange}
                   error={errors.location}
                   info="City and state suggested (eg. Boston, MA)"
                 />
@@ -165,7 +191,7 @@ class CreateProfile extends Component {
                   placeholder="Skills"
                   name="skills"
                   value={this.state.skills}
-                  onChange={() => this.onChange}
+                  onChange={this.onChange}
                   error={errors.skills}
                   info="Please use comma separated values (eg. HTML,CSS,JavaScript,PHP)"
                 />
@@ -173,7 +199,7 @@ class CreateProfile extends Component {
                   placeholder="Github Username"
                   name="githubusername"
                   value={this.state.githubusername}
-                  onChange={() => this.onChange}
+                  onChange={this.onChange}
                   error={errors.githubusername}
                   info="If you want your latest repos and a Github link, include your username"
                 />
@@ -181,13 +207,14 @@ class CreateProfile extends Component {
                   placeholder="Short Bio"
                   name="bio"
                   value={this.state.bio}
-                  onChange={() => this.onChange}
+                  onChange={this.onChange}
                   error={errors.bio}
                   info="Tell us a little about yourself"
                 />
 
                 <div className="md-3">
                   <button
+                    type="button"
                     onClick={e => {
                       e.preventDefault();
                       this.setState(prevState => ({
@@ -225,4 +252,7 @@ const mapStateToProps = state => ({
   errors: state.errors
 });
 
-export default connect(mapStateToProps)(CreateProfile);
+export default connect(
+  mapStateToProps,
+  { createProfile }
+)(withRouter(CreateProfile));
