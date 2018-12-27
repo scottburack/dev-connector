@@ -49,9 +49,9 @@ module.exports = function validateProfileInput(data) {
       errors.facebook = "Not a valid URL";
     }
   }
-  if (!isEmpty(data.linkedIn)) {
-    if (!Validator.isURL(data.linkedIn)) {
-      errors.linkedIn = "Not a valid URL";
+  if (!isEmpty(data.linkedin)) {
+    if (!Validator.isURL(data.linkedin)) {
+      errors.linkedin = "Not a valid URL";
     }
   }
   if (!isEmpty(data.instagram)) {
