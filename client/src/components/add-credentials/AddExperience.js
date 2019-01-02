@@ -5,7 +5,6 @@ import TextareaFieldGroup from "../common/TextareaFieldGroup";
 import { connect } from "react-redux";
 import PropTypes from "prop-types";
 import { addExperience } from "../../actions/profileActions";
-import { timingSafeEqual } from "crypto";
 
 class AddExperience extends Component {
   constructor(props) {
